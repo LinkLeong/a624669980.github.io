@@ -8,7 +8,7 @@
     <link href="/posts/87ecfb0e.html"/>
     <url>/posts/87ecfb0e.html</url>
     
-    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><img src="https://i.loli.net/2020/10/25/Ags4c8km6Cq7pMK.jpg" alt="Hexo+github"></p><p>前一段时间看同事搭建了一个个人博客,本着学习的态度也跟着玩了玩.经过两天的时间终于搭建起来了,下面说说自己的经历.</p><p>我同事的博客托管在coding和github上(能白嫖绝不掏钱),然后他又买了一个域名,域名以解析完美.</p><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul><li>win10</li><li>node ^10.15.1</li><li>npm ^6.4.1</li><li>git ^2.25.1.windows.1</li></ul><h1 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h1><p>找个目录git下载<a href="https://github.com/hexojs/hexo">Hexo</a>,然后就可以愉快的执行hexo的命令了.</p><ul><li></li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><img src="https://i.loli.net/2020/10/25/Ags4c8km6Cq7pMK.jpg" alt="Hexo+github"></p><p>前一段时间看同事搭建了一个个人博客,本着学习的态度也跟着玩了玩.经过两天的时间终于搭建起来了,下面说说自己的经历.</p><p>我同事的博客托管在coding和github上(能白嫖绝不掏钱),然后他又买了一个域名,域名以解析完美.</p><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul><li>win10</li><li>node ^10.15.1</li><li>npm ^6.4.1</li><li>git ^2.25.1.windows.1</li></ul><h1 id="发布博客"><a href="#发布博客" class="headerlink" title="发布博客"></a>发布博客</h1><p>找个目录git下载<a href="https://github.com/hexojs/hexo">Hexo</a>,然后就可以愉快的执行hexo的命令了.</p>]]></content>
     
     
     
