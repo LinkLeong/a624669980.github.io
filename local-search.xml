@@ -11,6 +11,20 @@
     <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p><img src="https://i.loli.net/2020/10/25/Ags4c8km6Cq7pMK.jpg" alt="Hexo+github"></p><p>前一段时间看同事搭建了一个个人博客,本着学习的态度也跟着玩了玩.经过两天的时间终于搭建起来了,下面说说自己的经历.</p><p>我同事的博客托管在coding和github上(能白嫖绝不掏钱),然后他又买了一个域名,域名以解析完美.</p><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ul><li>win10</li><li>node ^10.15.1</li><li>npm ^6.4.1</li><li>git ^2.25.1.windows.1</li></ul><h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p><code>npm i -g hexo</code></p><p><img src="https://i.loli.net/2020/11/01/429eXEZ35ztsAgK.png" alt="hexo 版本"></p><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>新建一个目录,博主是在<code>G:\hexo</code>,用cmd命令到该目录执行命令<code>hexo init myBlog</code>,hexo会初始化一个myBlog目录,并下载安装好hexo的东西.那接下来就可以运行了了.    <br/><br><code>hexo g</code> #生成<br/><br><code>hexo d</code> #启动服务<br>hexo命令如下图<br><img src="https://i.loli.net/2020/11/01/BFyRmYc8JCwUHPQ.png" alt="hexo 命令"><br>hexo运行起来的界面<br><img src="https://i.loli.net/2020/11/01/5ROotxQ8N6chZVz.jpg" alt="hexo 默认界面"><br>这一步搞定hexo基本工作已经完成,下面开始我们自定义工作.</p><h1 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h1><p>hexo的主题有很多,相对start比较多的是<a href="https://github.com/iissnan/hexo-theme-next">Next</a>,<a href="https://hexo.io/themes/">这里</a>是官方主题列表,客观可以去这里转转.<br>个人比较喜欢<a href="https://github.com/fluid-dev/hexo-theme-fluid">fluid</a>,所以博主这里介绍的也就是fluid.<br>接下来咱们安装fluid<code>npm i hexo-theme-fluid</code><br>接下来就是各种配置了,定制出你喜欢的样子就可以了哦.<br><img src="https://i.loli.net/2020/11/01/uSbrvm9hHyWYpFT.png" alt="fluid"><br><a href="https://hexo.fluid-dev.com/">这里</a>也有fluid官方部署文档,可以少走弯路.<br><a href="https://hexo.fluid-dev.com/docs/guide/">这里</a>fluid官方配置文档.<br><a href="https://hexo.fluid-dev.com/docs/guide/">这里</a>fluid github配置文档.</p><h1 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h1><p>hexo之说以强大和众多插件脱离不了关系,博主专门把插件拿出来给客官列出来.</p><h3 id="文章短链接"><a href="#文章短链接" class="headerlink" title="文章短链接"></a>文章短链接</h3><p><a href="https://github.com/rozbo/hexo-abbrlink">hexo-abbrlink</a></p><h3 id="看板娘"><a href="#看板娘" class="headerlink" title="看板娘"></a>看板娘</h3><p><a href="https://github.com/EYHN/hexo-helper-live2d">hexo-helper-live2d</a></p><h3 id="可视化编辑页面"><a href="#可视化编辑页面" class="headerlink" title="可视化编辑页面"></a>可视化编辑页面</h3><p><a href="https://github.com/fluid-dev/hexo-theme-fluid/blame/v1.8.2/_config.yml">hexo-admin</a><br>使用这个后台的时候建议多点保存,博主写了一个晚上的东西没保存成功.<br>以上是博主用到的插件,后面有在使用的会更新到这里面.</p><h1 id="github仓库"><a href="#github仓库" class="headerlink" title="github仓库"></a>github仓库</h1><p>创建一个托管html代码的仓库.<br><img src="https://i.loli.net/2020/11/01/a3Cj92ihs7BTnbK.png" alt="厂库申请说明"></p><h1 id="配置SSH-Key"><a href="#配置SSH-Key" class="headerlink" title="配置SSH Key"></a>配置SSH Key</h1><p>申请好github还是不够的,这时候<code>hexo d</code>并不能发布代码到github上,还需要进行ssh设置.<br><img src="https://i.loli.net/2020/11/01/AO9WIbdvXijCJLN.png" alt="设置"><br><br/><br><img src="https://i.loli.net/2020/11/01/ZrvBnEXKpiyzUFT.png" alt="设置key"><br>那么问题来了,key哪来的呢.我们下面生成key,打开cmd.执行命令<br><code>ssh-keygen -t rsa -C &quot;邮件地址&quot;</code>,然后一路next成功后如下图.<br><img src="https://i.loli.net/2020/11/02/bo6z4pntOT8YLcC.jpg" alt="shh"><br>然后到<code>C:\Users\用户名\.ssh</code>找到<code>id_rsa.pub</code>文件,用记事本打开复制出内容.填到上面甚至ssh里面就可以了.<br><img src="https://i.loli.net/2020/11/02/T4tUNwsSbfL6ave.png" alt="shh路径"></p><h1 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h1><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1>]]></content>
     
     
+    <categories>
+      
+      <category>分享</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>博客</tag>
+      
+      <tag>hexl</tag>
+      
+    </tags>
     
   </entry>
   
