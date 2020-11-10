@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>goland安装和破解</title>
+    <link href="/posts/4df77f93.html"/>
+    <url>/posts/4df77f93.html</url>
+    
+    <content type="html"><![CDATA[<h1 id="go开发工具"><a href="#go开发工具" class="headerlink" title="go开发工具"></a>go开发工具</h1><p>过开发工具有很多,博主是有过三个,分别是<a href="https://github.com/visualfc/liteide">LitelDE</a>,vscode,goland.<br/><br>vscode的话不只是博主安装的问题还是其他问题,代码联想异常的慢,顾放弃了.<br/><br><img src="https://i.loli.net/2020/11/09/8E1yOqJbSn6zmCr.jpg" alt="vscode"><br>litelde提好用的,还免费,博主也还是推荐使用,博主这种喜欢折腾的人不折腾难受啊,最终还是有goland.<br><br/><br><img src="https://i.loli.net/2020/11/09/PIZj7EwURxJ51yN.jpg" alt="litelde"><br>毕竟是官方推荐,个人也感觉goland更好用一点.但是Goland收费,博主也就在某宝买了一个激活码.<br><img src="https://i.loli.net/2020/11/09/Ggm6ZUHWqxDbSvA.png" alt="Goland"></p><h1 id="下载安装Goland"><a href="#下载安装Goland" class="headerlink" title="下载安装Goland"></a>下载安装Goland</h1><p>后面给的有下载地址,或者网上下载<a href="https://www.jetbrains.com/go/download/other.html">2020.1</a>这个版本<br><img src="https://i.loli.net/2020/11/09/G5L9MWdTOj8SEwX.png" alt="微信截图_20201109232556.png">,下载完一路next就行了</p><h1 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h1><ul><li><p>启动IDE，进入试用（若能直接进入项目界面，则忽略此步）<br><img src="https://i.loli.net/2020/11/09/MopjLJWiSGYqn8V.png" alt="ide"></p></li><li><p>将下载下来的ZIP包直接拖入，或者直接拖入你的项目界面也可以，不是非要拖入下图这个窗口（注意ZIP包不要解压）<br>拖入后会弹出Restart重启按钮，点击重启IDE<br><img src="https://i.loli.net/2020/11/09/TEGfNsbDB4vdRjP.png" alt="ide"><img src="https://i.loli.net/2020/11/09/aiyDOzdPCMJ8NHh.png" alt="ide"></p></li><li><p>重启后安装，激活完毕<br><img src="https://i.loli.net/2020/11/09/mN1zVFME4ZXWckp.png" alt="图片3.png"></p></li><li><p>若要查看激活过期时间<br><img src="https://i.loli.net/2020/11/09/7CiLjBcZVgXa1wF.png" alt="ide"></p></li><li><p>可以看到激活到2089年<br><img src="https://i.loli.net/2020/11/09/3nDerGNUgAmXLsZ.png" alt="ide"><br>常见问题若ZIP包拖进去没反应，建议先卸载原先的软件，清理残留，在别的文件夹里重新安装软件，云盘里提供了最新的版本下载安装一下几分钟。（2017版的不行，从2018开始的版本都支持的）</p><h1 id="最后的最后"><a href="#最后的最后" class="headerlink" title="最后的最后"></a>最后的最后</h1><p>百度网盘地址:<a href="https://pan.baidu.com/s/1cnEssMEe24yqTU-_cmNoJQ">链接</a><br/>提取码: e89q</p></li></ul>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hexo搭建个人博客,免费托管到github</title>
     <link href="/posts/87ecfb0e.html"/>
     <url>/posts/87ecfb0e.html</url>
