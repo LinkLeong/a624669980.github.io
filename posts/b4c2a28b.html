@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.jpg">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Link">
+  <meta name="keywords" content="">
+  <title>jenkins构建golang程序并推送到dockerhub仓库 - 小寒</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/railscasts.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>小寒</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('https://i.loli.net/2020/11/01/Q4BYw9ZRdnzEsuW.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-11-17 23:25" pubdate>
+        2020年11月17日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      647 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      10
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">jenkins构建golang程序并推送到dockerhub仓库</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>linux系统<br>安装jenkins<br>安装go环境<br>安装docker环境</p>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><p>新建一个freestylex项目<br><img src="https://i.loli.net/2020/11/17/KQ9UgrLvyROlpT8.png" srcset="/img/loading.gif" alt="新建项目"></p>
+<h1 id="配置项目"><a href="#配置项目" class="headerlink" title="配置项目"></a>配置项目</h1><p>配置git地址,注意分支别写错<br><img src="https://i.loli.net/2020/11/17/w2aXGCQde64JnvZ.png" srcset="/img/loading.gif" alt="配置git"></p>
+<p>添加一步Excute sell构建步骤,注意这个步骤是linux执行的脚本,不适用win环境.</p>
+<p><img src="https://i.loli.net/2020/11/16/fElm2L4vKtnF6N8.png" srcset="/img/loading.gif" alt="构建"></p>
+<p>如下是构建的代码,前面是构建的时候找不到go的环境变量,博主见简单粗暴的吧把go env的环境变量拷贝过来就可以执行了.</p>
+<p>docker上传的仓库需要在构建的机器上登录,才能上传.</p>
+<div class="hljs"><pre><code class="hljs routeros"><span class="hljs-comment">#!/bin/sh</span>
+
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOARCH</span>=<span class="hljs-string">&quot;amd64&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOBIN</span>=<span class="hljs-string">&quot;/usr/local/go/bin&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOCACHE</span>=<span class="hljs-string">&quot;/root/.cache/go-build&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOENV</span>=<span class="hljs-string">&quot;/root/.config/go/env&quot;</span>
+
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOHOSTARCH</span>=<span class="hljs-string">&quot;amd64&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOHOSTOS</span>=<span class="hljs-string">&quot;linux&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOOS</span>=<span class="hljs-string">&quot;linux&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOPATH</span>=<span class="hljs-string">&quot;/root/go&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOPROXY</span>=<span class="hljs-string">&quot;https://goproxy.io/&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOROOT</span>=<span class="hljs-string">&quot;/usr/local/go&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOSUMDB</span>=<span class="hljs-string">&quot;sum.golang.org&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOTOOLDIR</span>=<span class="hljs-string">&quot;/usr/local/go/pkg/tool/linux_amd64&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GCCGO</span>=<span class="hljs-string">&quot;gccgo&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">AR</span>=<span class="hljs-string">&quot;ar&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CC</span>=<span class="hljs-string">&quot;gcc&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CXX</span>=<span class="hljs-string">&quot;g++&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CGO_ENABLED</span>=<span class="hljs-string">&quot;1&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOMOD</span>=<span class="hljs-string">&quot;/application/jenkinsdata/workspace/go部署测试/go.mod&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CGO_CFLAGS</span>=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CGO_CXXFLAGS</span>=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CGO_FFLAGS</span>=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">CGO_LDFLAGS</span>=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">PKG_CONFIG</span>=<span class="hljs-string">&quot;pkg-config&quot;</span>
+<span class="hljs-builtin-name">export</span> <span class="hljs-attribute">GOGCCFLAGS</span>=<span class="hljs-string">&quot;-fPIC -m64 -pthread -fmessage-length=0 -fdebug-prefix-map=/tmp/go-build441126206=/tmp/go-build -gno-record-gcc-switches&quot;</span>
+
+id
+<span class="hljs-builtin-name">set</span> +e
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; Get old container id&#x27;</span>
+
+<span class="hljs-attribute">CID</span>=$(docker ps | grep <span class="hljs-string">&quot;apache&quot;</span> | awk <span class="hljs-string">&#x27;&#123;print $1&#125;&#x27;</span>)
+
+<span class="hljs-comment">#截取dockerfile里面的版本号</span>
+<span class="hljs-attribute">VERSION</span>=$(grep <span class="hljs-string">&quot;version&quot;</span> /application/jenkinsdata/workspace/go部署测试/Dockerfile | awk -F <span class="hljs-string">&quot;=&quot;</span>  <span class="hljs-string">&#x27;&#123;print$2&#125;&#x27;</span> | awk <span class="hljs-string">&#x27;&#123;print $1&#125;&#x27;</span> | sed -s <span class="hljs-string">&#x27;s/&quot;//g&#x27;</span>)
+
+echo <span class="hljs-variable">$CID</span>
+
+echo <span class="hljs-variable">$VERSION</span>
+
+
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; 进入到目录&#x27;</span>
+cd /application/jenkinsdata/workspace/go部署测试/
+sh /root/env.sh &gt;&gt; ~/.bashrc  &amp;&amp; source ~/.bashrc
+
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; 开始构建&#x27;</span>
+
+go build -o wh110api main.go
+
+
+<span class="hljs-comment">#开始进行docker构建</span>
+docker build -t a624669980/wh110api:<span class="hljs-variable">$VERSION</span> . | tee /etc/docker/docker_build_result.log
+<span class="hljs-attribute">RESULT</span>=$(cat /etc/docker/docker_build_result.log | tail -n 1)
+
+<span class="hljs-comment">#if [[&quot;$RESULT&quot; != *Successfully*]];then</span>
+<span class="hljs-comment">#  exit -1</span>
+<span class="hljs-comment">#fi</span>
+
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; Stopping old container&#x27;</span>
+
+<span class="hljs-comment">#if [ &quot;$CID&quot; != &quot;&quot; ];then</span>
+<span class="hljs-comment">#  docker stop $CID</span>
+<span class="hljs-comment">#fi</span>
+
+<span class="hljs-comment">#echo &#x27;&gt;&gt;&gt; Restarting docker&#x27;</span>
+<span class="hljs-comment">#service docker.io restart</span>
+<span class="hljs-comment">#sleep 5</span>
+  
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; Starting new container&#x27;</span>
+docker push a624669980/wh110api:<span class="hljs-variable">$VERSION</span>
+<span class="hljs-comment">#RESULT=$(cat /etc/docker/docker_build_result.log | tail -n 1)</span>
+echo <span class="hljs-string">&#x27;&gt;&gt;&gt; push end&#x27;</span></code></pre></div>
+<p>构建成功后仓库就会更新.<br><img src="https://i.loli.net/2020/11/17/TmbXhPFwGEiIAc8.png" srcset="/img/loading.gif" alt="构建成功"></p>
+<h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>构建成功后就可以正常使用了!docker的构建推送jenkins提供的有插件,博主弄了一会没弄好,也还是需要弄环境,不如就弄go和docker的环境了.构建之前可以先手动在构建的机器上执行构建步骤,然后在jenkins里面执行,基本没啥大问题.</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/go/">go</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/go/">go</a>
+                    
+                      <a class="hover-with-bg" href="/tags/jenkins/">jenkins</a>
+                    
+                      <a class="hover-with-bg" href="/tags/docker/">docker</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" rel="nofollow noopener noopener">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议 (CC BY-NC-ND 4.0)</a> 。转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/posts/28da225b.html">
+                        <span class="hidden-mobile">golang连接及操作mongodb数据库</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <script type="text/javascript">
+    function loadUtterances() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'a624669980/blogComment');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('label', 'utterances');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    }
+    waitElementVisible('comments', loadUtterances)
+  </script>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io/#" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid/" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "jenkins构建golang程序并推送到dockerhub仓库&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+      icon: "❡"
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      window.ga = window.ga || function () { (ga.q = ga.q || []).push(arguments) };
+      ga.l = +new Date;
+      ga('create', 'UA-179025482-2', 'auto');
+      ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
