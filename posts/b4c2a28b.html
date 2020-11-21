@@ -17,7 +17,7 @@
   <meta name="description" content="">
   <meta name="author" content="Link">
   <meta name="keywords" content="">
-  <title>jenkins构建golang程序并推送到dockerhub仓库 - 小寒</title>
+  <title>jenkins构建golang程序并推送到dockerhub仓库或推送svn - 小寒</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -165,7 +165,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      647 字
+      1.1k 字
     </span>
   
 
@@ -175,7 +175,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      10
+      17
        分钟
     </span>
   
@@ -205,10 +205,15 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">jenkins构建golang程序并推送到dockerhub仓库</h1>
+            <h1 style="display: none">jenkins构建golang程序并推送到dockerhub仓库或推送svn</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>linux系统<br>安装jenkins<br>安装go环境<br>安装docker环境</p>
+              <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li>linux系统</li>
+<li>安装jenkins</li>
+<li>安装go环境</li>
+<li>安装docker环境</li>
+</ul>
 <h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><p>新建一个freestylex项目<br><img src="https://i.loli.net/2020/11/17/KQ9UgrLvyROlpT8.png" srcset="/img/loading.gif" alt="新建项目"></p>
 <h1 id="配置项目"><a href="#配置项目" class="headerlink" title="配置项目"></a>配置项目</h1><p>配置git地址,注意分支别写错<br><img src="https://i.loli.net/2020/11/17/w2aXGCQde64JnvZ.png" srcset="/img/loading.gif" alt="配置git"></p>
 <p>添加一步Excute sell构建步骤,注意这个步骤是linux执行的脚本,不适用win环境.</p>
@@ -289,6 +294,56 @@ docker push a624669980/wh110api:<span class="hljs-variable">$VERSION</span>
 <span class="hljs-comment">#RESULT=$(cat /etc/docker/docker_build_result.log | tail -n 1)</span>
 echo <span class="hljs-string">&#x27;&gt;&gt;&gt; push end&#x27;</span></code></pre></div>
 <p>构建成功后仓库就会更新.<br><img src="https://i.loli.net/2020/11/17/TmbXhPFwGEiIAc8.png" srcset="/img/loading.gif" alt="构建成功"></p>
+<h1 id="推送svn"><a href="#推送svn" class="headerlink" title="推送svn"></a>推送svn</h1><p>新建项目都一样只是Excute sell语句不同.</p>
+<div class="hljs"><pre><code class="hljs bash"><span class="hljs-meta">#!/bin/sh</span>
+
+<span class="hljs-built_in">export</span> GOARCH=<span class="hljs-string">&quot;amd64&quot;</span>
+<span class="hljs-built_in">export</span> GOBIN=<span class="hljs-string">&quot;/usr/local/go/bin&quot;</span>
+<span class="hljs-built_in">export</span> GOCACHE=<span class="hljs-string">&quot;/root/.cache/go-build&quot;</span>
+<span class="hljs-built_in">export</span> GOENV=<span class="hljs-string">&quot;/root/.config/go/env&quot;</span>
+
+<span class="hljs-built_in">export</span> GOHOSTARCH=<span class="hljs-string">&quot;amd64&quot;</span>
+<span class="hljs-built_in">export</span> GOHOSTOS=<span class="hljs-string">&quot;linux&quot;</span>
+<span class="hljs-built_in">export</span> GOOS=<span class="hljs-string">&quot;linux&quot;</span>
+<span class="hljs-built_in">export</span> GOPATH=<span class="hljs-string">&quot;/root/go&quot;</span>
+<span class="hljs-built_in">export</span> GOPROXY=<span class="hljs-string">&quot;https://goproxy.io/&quot;</span>
+<span class="hljs-built_in">export</span> GOROOT=<span class="hljs-string">&quot;/usr/local/go&quot;</span>
+<span class="hljs-built_in">export</span> GOSUMDB=<span class="hljs-string">&quot;sum.golang.org&quot;</span>
+<span class="hljs-built_in">export</span> GOTOOLDIR=<span class="hljs-string">&quot;/usr/local/go/pkg/tool/linux_amd64&quot;</span>
+<span class="hljs-built_in">export</span> GCCGO=<span class="hljs-string">&quot;gccgo&quot;</span>
+<span class="hljs-built_in">export</span> AR=<span class="hljs-string">&quot;ar&quot;</span>
+<span class="hljs-built_in">export</span> CC=<span class="hljs-string">&quot;gcc&quot;</span>
+<span class="hljs-built_in">export</span> CXX=<span class="hljs-string">&quot;g++&quot;</span>
+<span class="hljs-built_in">export</span> CGO_ENABLED=<span class="hljs-string">&quot;1&quot;</span>
+<span class="hljs-built_in">export</span> GOMOD=<span class="hljs-string">&quot;/application/jenkinsdata/workspace/外汇110api/go.mod&quot;</span>
+<span class="hljs-built_in">export</span> CGO_CFLAGS=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-built_in">export</span> CGO_CXXFLAGS=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-built_in">export</span> CGO_FFLAGS=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-built_in">export</span> CGO_LDFLAGS=<span class="hljs-string">&quot;-g -O2&quot;</span>
+<span class="hljs-built_in">export</span> PKG_CONFIG=<span class="hljs-string">&quot;pkg-config&quot;</span>
+<span class="hljs-built_in">export</span> GOGCCFLAGS=<span class="hljs-string">&quot;-fPIC -m64 -pthread -fmessage-length=0 -fdebug-prefix-map=/tmp/go-build441126206=/tmp/go-build -gno-record-gcc-switches&quot;</span>
+
+
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;&gt;&gt;&gt; 进入到目录&#x27;</span>
+<span class="hljs-built_in">cd</span> /application/jenkinsdata/workspace/外汇110api/
+<span class="hljs-comment">#sh /root/env.sh &gt;&gt; ~/.bashrc  &amp;&amp; source ~/.bashrc</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;&gt;&gt;&gt; 开始构建&#x27;</span>
+
+go build -o wh110api main.go
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;&gt;&gt;&gt; 构建完成&#x27;</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;&gt;&gt;&gt; 拷贝文件&#x27;</span>
+\cp -rf /application/jenkinsdata/workspace/外汇110api/* /mnt/wh110/
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&#x27;&gt;&gt;&gt; 构建结束&#x27;</span>
+
+<span class="hljs-built_in">cd</span> /mnt/wh110
+svn st|awk <span class="hljs-string">&#x27;&#123;print $2&#125;&#x27;</span>|xargs svn add --force
+svn commit -m <span class="hljs-string">&quot;auto push&quot;</span> *
+
+ssh root@xxx.xxx.xxx <span class="hljs-string">&quot;svn update /mnt/wh110;chmod 777 -R /mnt/wh110;supervisorctl restart golang-wh110-server&quot;</span></code></pre></div>
+<p>注意,go编译出来的是可执行文件,所以需要给权限才能启动,这里给权限然后重启supervisor,这里在特殊说一下supervisor设置好环境变量一定要更新配置文件才会生效.使用cp命令的时候会提示覆盖,记得前面加上反斜杠.</p>
 <h1 id="结束"><a href="#结束" class="headerlink" title="结束"></a>结束</h1><p>构建成功后就可以正常使用了!docker的构建推送jenkins提供的有插件,博主弄了一会没弄好,也还是需要弄环境,不如就弄go和docker的环境了.构建之前可以先手动在构建的机器上执行构建步骤,然后在jenkins里面执行,基本没啥大问题.</p>
 
             </div>
@@ -505,7 +560,7 @@ echo <span class="hljs-string">&#x27;&gt;&gt;&gt; push end&#x27;</span></code></
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        "jenkins构建golang程序并推送到dockerhub仓库&nbsp;",
+        "jenkins构建golang程序并推送到dockerhub仓库或推送svn&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
