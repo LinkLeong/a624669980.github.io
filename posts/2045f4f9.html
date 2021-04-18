@@ -17,7 +17,7 @@
   <meta name="description" content="">
   <meta name="author" content="Link">
   <meta name="keywords" content="">
-  <title>.net core部署linux环境安装ssl证书 - 小寒</title>
+  <title>consul+consul-template+nginx 自动负载均衡 - 小寒</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -153,8 +153,8 @@
   
     <span class="post-meta">
       <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2020-12-01 23:17" pubdate>
-        2020年12月1日 晚上
+      <time datetime="2021-04-18 21:31" pubdate>
+        2021年4月18日 晚上
       </time>
     </span>
   
@@ -165,7 +165,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      806 字
+      644 字
     </span>
   
 
@@ -205,113 +205,164 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto" id="post">
             <!-- SEO header -->
-            <h1 style="display: none">.net core部署linux环境安装ssl证书</h1>
+            <h1 style="display: none">consul+consul-template+nginx 自动负载均衡</h1>
             
             <div class="markdown-body" id="post-body">
-              <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
-<li>CentOS 7.8</li>
-<li>dotnet 3.1</li>
-<li>宝塔 7.4.5</li>
+              <h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><ul>
+<li><p>consul</p>
+</li>
+<li><p>consult-template</p>
+</li>
+<li><p>nginx</p>
+</li>
 </ul>
-<h1 id="新建站点"><a href="#新建站点" class="headerlink" title="新建站点"></a>新建站点</h1><p>需要在宝塔面板安装Nginx,然后在网站里面新建网站<br><img src="https://i.loli.net/2020/12/01/7y28mgq6Zce9JMj.png" srcset="/img/loading.gif" alt="新建站点"><br>这里站点最好以域名来命名,方便记忆.<br>这里新建站点的目的在于新建目录和新建Nginx配置文件,方便后面修改和上传文件.</p>
-<h1 id="上传"><a href="#上传" class="headerlink" title="上传"></a>上传</h1><p>上传文件比较方便,如果是正式环境建议走个svn或者git,便于版本管理,当然没走docker也可以.博主这里就简单的上传一下.<br><img src="https://i.loli.net/2020/12/01/8KXYpUrS2Hk6vfE.png" srcset="/img/loading.gif" alt="上传文件"><br>找到相应的目录直接拖进去就行了,文件数量过多的时候建议压缩一下.</p>
-<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><p>启动的话其实是supervisor做守护,所以需要在宝塔面板安装supervisor,然后添加守护.<br><img src="https://i.loli.net/2020/12/01/RNblJITdAn4uwH9.png" srcset="/img/loading.gif" alt="添加守护进程"><br>这里需要说明启动命令,启动命令需要指明绝对路径,虽然下面提示有说明,这里在强调一边.<br /><br>这里记得程序里面附加的端口号,Nginx配制的时候需要使用.</p>
-<h1 id="配置站点"><a href="#配置站点" class="headerlink" title="配置站点"></a>配置站点</h1><p>上面的操作之后只是能够根据端口访问,但还没附加到域名上.<br><img src="https://i.loli.net/2020/12/01/qpg5ifmUSC7jJxG.png" srcset="/img/loading.gif" alt="默认配置"><br>下面贴出来博主的配置,给大家做个参考.</p>
-<div class="hljs"><pre><code class="hljs nginx"><span class="hljs-attribute">upstream</span> test.baidu.com &#123;
-        <span class="hljs-attribute">server</span> <span class="hljs-number">127.0.0.1:8021</span>      weight=<span class="hljs-number">10</span>;
-        &#125;
+<h1 id="nginx安装"><a href="#nginx安装" class="headerlink" title="nginx安装"></a>nginx安装</h1><ul>
+<li>安装依赖</li>
+</ul>
+<div class="hljs"><pre><code class="hljs nginx"><span class="hljs-attribute">yum</span> -y install gcc zlib zlib-devel pcre-devel openssl openssl-devel</code></pre></div>
 
-server
-&#123;
+<ul>
+<li>下载nginx</li>
+</ul>
+<div class="hljs"><pre><code class="hljs nginx"><span class="hljs-attribute">wget</span> http://nginx.org/download/nginx-1.19.10.tar.gz</code></pre></div>
+<p>也可以自己下载你 <a target="_blank" rel="noopener" href="http://nginx.org/download">选择版本</a></p>
+<div class="hljs"><pre><code class="hljs nginx"><span class="hljs-attribute">tar</span> -xvf nginx-<span class="hljs-number">1</span>.<span class="hljs-number">19</span>.<span class="hljs-number">10</span>.tar.gz</code></pre></div>
+
+<ul>
+<li>进入到目录执行命令</li>
+</ul>
+<div class="hljs"><pre><code class="hljs nginx">./configure
+make
+<span class="hljs-attribute">make</span> install</code></pre></div>
+<ul>
+<li>修改默认配置文件(默认80端口按需修改)</li>
+</ul>
+<p><img src="https://i.loli.net/2021/04/16/wJbR8YleGftPWku.png" srcset="/img/loading.gif" alt="screenshot-20210416-142319.png"></p>
+<ul>
+<li>ip加端口访问nginx默认页面</li>
+</ul>
+<p><img src="https://i.loli.net/2021/04/16/gtj7oJ2HmDNalWK.png" srcset="/img/loading.gif" alt="screenshot-20210416-153434.png"></p>
+<p>nginx安装完成</p>
+<p>nginx启动失败：Redirecting to /bin/systemctl start nginx.service Failed to start nginx.service: Unit n…</p>
+<p>是因为nginx没有有添加到系统服务，手动手动添加一个即可。</p>
+<p>在 /etc/init.d/下创建名为nginx的启动脚本即可，内容如下：</p>
+<div class="hljs"><pre><code class="hljs sh"><span class="hljs-meta">#!/bin/bash</span>
+<span class="hljs-comment">#</span>
+<span class="hljs-comment"># chkconfig: - 85 15</span>
+<span class="hljs-comment"># description: Nginx is a World Wide Web server.</span>
+<span class="hljs-comment"># processname: nginx</span>
+
+nginx=/usr/<span class="hljs-built_in">local</span>/nginx/sbin/nginx
+conf=/usr/<span class="hljs-built_in">local</span>/nginx/conf/nginx.conf
+<span class="hljs-keyword">case</span> <span class="hljs-variable">$1</span> <span class="hljs-keyword">in</span>
+start)
+<span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;Starting Nginx&quot;</span>
+<span class="hljs-variable">$nginx</span> -c <span class="hljs-variable">$conf</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot; done&quot;</span>
+;;
+stop)
+<span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;Stopping Nginx&quot;</span>
+killall -9 nginx
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot; done&quot;</span>
+;;
+<span class="hljs-built_in">test</span>)
+<span class="hljs-variable">$nginx</span> -t -c <span class="hljs-variable">$conf</span>
+;;
+reload)
+<span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;Reloading Nginx&quot;</span>
+ps auxww | grep nginx | grep master | awk <span class="hljs-string">&#x27;&#123;print $2&#125;&#x27;</span> | xargs <span class="hljs-built_in">kill</span> -HUP
+<span class="hljs-built_in">echo</span> <span class="hljs-string">&quot; done&quot;</span>
+;;
+restart)
+<span class="hljs-variable">$0</span> stop
+<span class="hljs-variable">$0</span> start
+;;
+show)
+ps -aux|grep nginx
+;;
+*)
+<span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;Usage: <span class="hljs-variable">$0</span> &#123;start|restart|reload|stop|test|show&#125;&quot;</span>
+;;
+<span class="hljs-keyword">esac</span></code></pre></div>
+
+<p>设置执行权限：<code>chmod +x /etc/init.d/nginx</code></p>
+<p>注册成服务：<code>chkconfig --add nginx</code></p>
+<p>设置开机启动：<code>chkconfig nginx on</code></p>
+<h1 id="consul安装"><a href="#consul安装" class="headerlink" title="consul安装"></a>consul安装</h1><ul>
+<li>下载consul安装包</li>
+</ul>
+<div class="hljs"><pre><code class="hljs sh">wget https://releases.hashicorp.com/consul/1.9.4/consul_1.9.4_linux_amd64.zip</code></pre></div>
+
+<p>附上<a target="_blank" rel="noopener" href="https://releases.hashicorp.com/consul/">下载地址</a></p>
+<ul>
+<li>解压</li>
+</ul>
+<div class="hljs"><pre><code class="hljs shell">unzip consul_1.9.4_linux_amd64.zip</code></pre></div>
+
+<ul>
+<li>服务端启动代码</li>
+</ul>
+<div class="hljs"><pre><code class="hljs sh">consul agent -server -ui -<span class="hljs-built_in">bind</span> 27.252.10.25 -client=0.0.0.0  -data-dir /mnt/consul/data -bootstrap -node master</code></pre></div>
+
+<ul>
+<li>客户端启动代码</li>
+</ul>
+<div class="hljs"><pre><code class="hljs sh">consul agent -<span class="hljs-built_in">bind</span> 172.21.247.22 -client=0.0.0.0  -data-dir /mnt/consul/data -join 27.252.10.25 -node node1</code></pre></div>
+
+<ul>
+<li>consul 安装成功</li>
+</ul>
+<p>注:阿里云服务器无法绑定外网ip,绑定到内网ip就行了,在外网可以访问.</p>
+<h1 id="consul-template安装"><a href="#consul-template安装" class="headerlink" title="consul-template安装"></a>consul-template安装</h1><p>consul-template需要和nginx安装在一台机器上</p>
+<ul>
+<li>下载consul-template</li>
+</ul>
+<div class="hljs"><pre><code class="hljs sh">wget https://releases.hashicorp.com/consul-template/0.25.2/consul-template_0.25.2_linux_amd64.zip</code></pre></div>
+
+<p>可以选择<a target="_blank" rel="noopener" href="https://releases.hashicorp.com/consul-template">其他版本</a></p>
+<ul>
+<li>解压</li>
+</ul>
+<div class="hljs"><pre><code class="hljs sh">unzpi consul-template_0.25.2_linux_amd64.zip</code></pre></div>
+
+<ul>
+<li>配置脚本文件 nginx.temp.ctmpl</li>
+</ul>
+<div class="hljs"><pre><code class="hljs nginx">upstream &#123;&#123;$name&#125;&#125; &#123;
+  zone upstream-&#123;&#123;$name&#125;&#125; 64k;
+  &#123;&#123;range $service&#125;&#125;server &#123;&#123;.Address&#125;&#125;:&#123;&#123;.Port&#125;&#125; max_fails=3 fail_timeout=60 weight=1;
+  &#123;&#123;else&#125;&#125;server 127.0.0.1:65535; # force a 502&#123;&#123;end&#125;&#125;
+&#125; &#123;&#123;end&#125;&#125;
+
+<span class="hljs-section">server</span> &#123;
   <span class="hljs-attribute">listen</span> <span class="hljs-number">80</span>;
-	<span class="hljs-attribute">listen</span> <span class="hljs-number">443</span> ssl http2;
-    <span class="hljs-attribute">server_name</span> test.baidu.com;
-    <span class="hljs-attribute">index</span> index.php index.html index.htm default.php default.htm default.html;
-    <span class="hljs-attribute">root</span> /www/wwwroot/test.baidu.com;
-    
-    <span class="hljs-comment">#SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则</span>
-    <span class="hljs-comment">#error_page 404/404.html;</span>
-    <span class="hljs-comment">#HTTP_TO_HTTPS_START</span>
-    <span class="hljs-attribute">if</span> (<span class="hljs-variable">$server_port</span> !<span class="hljs-regexp">~ 443)</span>&#123;
-        <span class="hljs-attribute">rewrite</span><span class="hljs-regexp"> ^(/.*)$</span> https://<span class="hljs-variable">$host</span><span class="hljs-variable">$1</span> <span class="hljs-literal">permanent</span>;
-    &#125;
-    <span class="hljs-comment">#HTTP_TO_HTTPS_END</span>
-    <span class="hljs-attribute">ssl_certificate</span>    /www/server/panel/vhost/ssl/test.pem;
-    <span class="hljs-attribute">ssl_certificate_key</span>    /www/server/panel/vhost/ssl/testkey.pem;
-    <span class="hljs-attribute">ssl_protocols</span> TLSv1.<span class="hljs-number">1</span> TLSv1.<span class="hljs-number">2</span> TLSv1.<span class="hljs-number">3</span>;
-    <span class="hljs-attribute">ssl_ciphers</span> EECDH+CHACHA20:EECDH+CHACHA20-draft:EECDH+AES128:RSA+AES128:EECDH+AES256:RSA+AES256:EECDH+3DES:RSA+3DES:!MD5;
-    <span class="hljs-attribute">ssl_prefer_server_ciphers</span> <span class="hljs-literal">on</span>;
-    <span class="hljs-attribute">ssl_session_cache</span> shared:SSL:<span class="hljs-number">10m</span>;
-    <span class="hljs-attribute">ssl_session_timeout</span> <span class="hljs-number">10m</span>;
-    <span class="hljs-attribute">add_header</span> Strict-Transport-Security <span class="hljs-string">&quot;max-age=31536000&quot;</span>;
-    <span class="hljs-attribute">error_page</span> <span class="hljs-number">497</span>  https://<span class="hljs-variable">$host</span><span class="hljs-variable">$request_uri</span>;
+ <span class="hljs-attribute">server_name</span> servername.com;
+&#123;&#123;range services&#125;&#125; &#123;&#123;$name := .Name&#125;&#125;
+  location /&#123;&#123;$name&#125;&#125;/ &#123;
+    proxy_pass http://&#123;&#123;$name&#125;&#125;/;
+  &#125;
+&#123;&#123;end&#125;&#125;
+&#125;</code></pre></div>
 
-    <span class="hljs-comment">#SSL-START SSL相关配置，请勿删除或修改下一行带注释的404规则</span>
-    <span class="hljs-comment">#error_page 404/404.html;</span>
+<p>启动更新</p>
+<div class="hljs"><pre><code class="hljs sh">./consul-template  -consul-addr 172.21.247.21:8500 -template=<span class="hljs-string">&quot;nginx.temp.ctmpl:/etc/nginx/conf.d/nginx.conf:service nginx reload&quot;</span> -once</code></pre></div>
 
-
-
-
-    <span class="hljs-comment">#SSL-END</span>
-    
-    <span class="hljs-comment">#ERROR-PAGE-START  错误页配置，可以注释、删除或修改</span>
-    <span class="hljs-comment">#error_page 404 /404.html;</span>
-    <span class="hljs-comment">#error_page 502 /502.html;</span>
-    <span class="hljs-comment">#ERROR-PAGE-END</span>
-    
-    <span class="hljs-comment">#PHP-INFO-START  PHP引用配置，可以注释或修改</span>
-    <span class="hljs-attribute">include</span> enable-php-<span class="hljs-number">00</span>.conf;
-    <span class="hljs-comment">#PHP-INFO-END</span>
-    
-    <span class="hljs-comment">#REWRITE-START URL重写规则引用,修改后将导致面板设置的伪静态规则失效</span>
-    <span class="hljs-attribute">include</span> /www/server/panel/vhost/rewrite/test.baidu.com.conf;
-    <span class="hljs-comment">#REWRITE-END</span>
-    
-    <span class="hljs-comment">#禁止访问的文件或目录</span>
-   <span class="hljs-attribute">location</span> / &#123;
-                <span class="hljs-attribute">proxy_pass</span> http://test.baidu.com;
-                <span class="hljs-comment"># proxy_redirect on;</span>
-                 <span class="hljs-attribute">proxy_set_header</span> Host <span class="hljs-variable">$host</span>;
-                <span class="hljs-comment"># proxy_set_header X-Forwarded-For $remote_addr;</span>
-                 <span class="hljs-attribute">proxy_set_header</span> Via <span class="hljs-string">&quot;nginx&quot;</span>;
-                 <span class="hljs-attribute">proxy_set_header</span> Runtime-Mode <span class="hljs-string">&quot;Debug&quot;</span>;
-                <span class="hljs-comment"># proxy_buffering off;</span>
-                <span class="hljs-comment"># proxy_ignore_client_abort on;</span>
-                <span class="hljs-comment">##                proxy_connect_timeout 90;</span>
-<span class="hljs-comment">#                proxy_send_timeout 90;</span>
-<span class="hljs-comment">#                proxy_read_timeout 90;</span>
-<span class="hljs-comment">#                proxy_buffer_size 4k;</span>
-<span class="hljs-comment">#                proxy_buffers 4 32k;</span>
-<span class="hljs-comment">#                proxy_busy_buffers_size 64k;</span>
-<span class="hljs-comment">#                proxy_temp_file_write_size 64k;</span>
-        &#125;
-
-    <span class="hljs-attribute">access_log</span>  /www/wwwlogs/test.baidu.com.log;
-    <span class="hljs-attribute">error_log</span>  /www/wwwlogs/test.baidu.com.<span class="hljs-literal">error</span>.log;
-&#125;
-</code></pre></div>
-
-<h1 id="ssl证书"><a href="#ssl证书" class="headerlink" title="ssl证书"></a>ssl证书</h1><p>现在在网上还是比较容易申请到ssl证书,博主这里介绍的是不能进行域名验证的情况,或者是测试环境使用的sll证书.需要下载<a target="_blank" rel="noopener" href="https://keymanager.org/">keymanager</a>,下载后进入到主界面<img src="https://i.loli.net/2020/12/01/TvDG5eOlf8Axqu7.png" srcset="/img/loading.gif" alt="keymanager"><br>然后点右上角<code>创建测试证书</code><br><img src="https://i.loli.net/2020/12/01/ykn9UXsNpoWqv76.png" srcset="/img/loading.gif" alt="创建证书"><br>这里需要注意选择的CA证书,后面需要安装CA证书才不会出现提示,其他默认就行.证书申请完后,如果只是本机实用就一键安装,如果需要给同事实用就下载CA证书分发给需要使用的电脑.<br><img src="https://i.loli.net/2020/12/01/gyLrZn7pMswkXRc.png" srcset="/img/loading.gif" alt="导出CA证书"></p>
+<p>注: -once代表只运行一次</p>
 
             </div>
             <hr>
             <div>
               <div class="post-metas mb-3">
                 
-                  <div class="post-meta mr-3">
-                    <i class="iconfont icon-category"></i>
-                    
-                      <a class="hover-with-bg" href="/categories/core/">core</a>
-                    
-                  </div>
-                
                 
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/ssl/">ssl</a>
+                      <a class="hover-with-bg" href="/tags/consul-template/">consul-template</a>
                     
-                      <a class="hover-with-bg" href="/tags/core/">core</a>
+                      <a class="hover-with-bg" href="/tags/consul/">consul</a>
+                    
+                      <a class="hover-with-bg" href="/tags/nginx/">nginx</a>
                     
                   </div>
                 
@@ -324,9 +375,9 @@ server
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/posts/2045f4f9.html">
+                      <a href="/posts/4e4947d4.html">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">consul+consul-template+nginx 自动负载均衡</span>
+                        <span class="hidden-mobile">golang操作ElasticSearch</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -334,8 +385,8 @@ server
                   <article class="post-next col-6">
                     
                     
-                      <a href="/posts/b4c2a28b.html">
-                        <span class="hidden-mobile">jenkins构建golang程序并推送到dockerhub仓库或推送svn</span>
+                      <a href="/posts/1770d61b.html">
+                        <span class="hidden-mobile">.net core部署linux环境安装ssl证书</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
@@ -511,7 +562,7 @@ server
     var typed = new Typed('#subtitle', {
       strings: [
         '  ',
-        ".net core部署linux环境安装ssl证书&nbsp;",
+        "consul+consul-template+nginx 自动负载均衡&nbsp;",
       ],
       cursorChar: "_",
       typeSpeed: 70,
